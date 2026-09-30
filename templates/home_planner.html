@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Home Interior Planner - PocketSmart AI{% endblock %}
+{% block content %}
+<main>
+  <section class="page-header">
+    <h1>Home Interior Budget Planner</h1>
+    <p>Create a customized budget plan for your dream home interior</p>
+  </section>
+
+  <div class="container narrow">
+    <form id="homeForm" class="form-card" novalidate>
+      <div id="alert" class="alert"></div>
+
+      <div class="form-section">
+        <h3><i class="fa-solid fa-indian-rupee-sign"></i> Budget Details</h3>
+        <div class="form-group">
+          <label for="total_budget">Total Budget (₹)</label>
+          <div class="input-icon"><i class="fa-solid fa-money-bill-wave"></i>
+            <input type="number" id="total_budget" min="1000" step="100" placeholder="e.g. 100000" required></div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3><i class="fa-solid fa-lightbulb"></i> Fixtures &amp; Furniture</h3>
+        <div class="form-row">
+          <div class="form-group"><label for="num_lights"><i class="fa-solid fa-lightbulb"></i> Number of Lights/Fixtures</label>
+            <input type="number" id="num_lights" min="0" max="100" value="5"></div>
+          <div class="form-group"><label for="num_fans"><i class="fa-solid fa-fan"></i> Number of Ceiling Fans</label>
+            <input type="number" id="num_fans" min="0" max="50" value="2"></div>
+          <div class="form-group"><label for="num_furniture"><i class="fa-solid fa-couch"></i> Number of Furniture Pieces</label>
+            <input type="number" id="num_furniture" min="0" max="100" value="3"></div>
+          <div class="form-group"><label for="num_dining_tables"><i class="fa-solid fa-utensils"></i> Number of Dining Tables</label>
+            <input type="number" id="num_dining_tables" min="0" max="10" value="1"></div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3><i class="fa-solid fa-door-open"></i> Rooms to Include</h3>
+        <div class="checks">
+          <label class="check"><input type="checkbox" id="has_living_room" checked> <i class="fa-solid fa-tv"></i> Living Room</label>
+          <label class="check"><input type="checkbox" id="has_kitchen"> <i class="fa-solid fa-kitchen-set"></i> Kitchen</label>
+          <label class="check"><input type="checkbox" id="has_bedroom"> <i class="fa-solid fa-bed"></i> Bedroom</label>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3><i class="fa-solid fa-clipboard"></i> Additional Information</h3>
+        <div class="form-group">
+          <label for="additional_requirements">Special Requirements or Preferences</label>
+          <textarea id="additional_requirements" maxlength="500" placeholder="e.g. modern minimalist style, wooden finish, energy-efficient lights..."></textarea>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <button type="submit" class="btn" id="submitBtn"><i class="fa-solid fa-calculator"></i> Generate Recommendations</button>
+      </div>
+    </form>
+
+    <div class="loader" id="loader"><div class="spinner"></div>Gemini AI is planning your home budget...</div>
+    <div class="results" id="results"></div>
+  </div>
+</main>
+{% endblock %}
+{% block scripts %}
+<script>
+  const $ = (id) => document.getElementById(id);
+  $("homeForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const total = parseFloat($("total_budget").value);
+    const nums = ["num_lights", "num_fans", "num_furniture", "num_dining_tables"].map((k) => parseInt($(k).value || "0", 10));
+    if (!total || total < 1000) return showAlert($("alert"), "Please enter a budget of at least ₹1,000.");
+    if (nums.some((n) => isNaN(n) || n < 0)) return showAlert($("alert"), "Quantities cannot be negative.");
+    if (nums.every((n) => n === 0)) return showAlert($("alert"), "Please enter at least one item quantity.");
+
+    const body = {
+      total_budget: total,
+      num_lights: nums[0], num_fans: nums[1], num_furniture: nums[2], num_dining_tables: nums[3],
+      has_living_room: $("has_living_room").checked,
+      has_kitchen: $("has_kitchen").checked,
+      has_bedroom: $("has_bedroom").checked,
+      additional_requirements: $("additional_requirements").value.trim() || null,
+    };
+    runPlanner({
+      form: $("homeForm"), button: $("submitBtn"), loader: $("loader"), results: $("results"), alertEl: $("alert"),
+      type: "home",
+      request: () => api("/home-budget", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }),
+    });
+  });
+</script>
+{% endblock %}

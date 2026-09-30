@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}PocketSmart AI - Smart Budget & Recommendation Assistant{% endblock %}
+{% block content %}
+<main>
+  <section class="hero">
+    <h1>PocketSmart</h1>
+    <h2>AI-Powered Budget Planning for Everyday Needs</h2>
+    <p>Make smarter financial decisions with personalized budget recommendations for home interiors, parties, and jewelry purchases. Our AI helps you get the most value for your money.</p>
+    <div class="actions">
+      <a href="{{ '/dashboard' if user else '/register' }}" class="btn">Get Started</a>
+      <a href="#features" class="btn btn-light">Learn More</a>
+    </div>
+  </section>
+
+  <section class="section" id="features">
+    <div class="container">
+      <div class="section-title">
+        <h2>Our Smart Budget Planners</h2>
+        <p>Discover how PocketSmart helps you make better financial decisions across different areas of your life</p>
+      </div>
+      <div class="grid grid-3">
+        <div class="card feature-card">
+          <div class="icon-band"><i class="fa-solid fa-house"></i></div>
+          <div class="body">
+            <h3>Home Interior Budget Planner</h3>
+            <p>Get personalized recommendations for furniture, lighting, and decor that fit your style and budget. Compare options from IKEA, Amazon and Flipkart.</p>
+          </div>
+        </div>
+        <div class="card feature-card">
+          <div class="icon-band"><i class="fa-solid fa-champagne-glasses"></i></div>
+          <div class="body">
+            <h3>Party Budget Planner</h3>
+            <p>Plan your perfect event with smart budget allocations for venue, catering, decorations, and entertainment - sourced from Swiggy, Zomato, OYO and more.</p>
+          </div>
+        </div>
+        <div class="card feature-card">
+          <div class="icon-band"><i class="fa-solid fa-gem"></i></div>
+          <div class="body">
+            <h3>Jewelry Budget Planner</h3>
+            <p>Find the ideal jewelry for any occasion. Upload your outfit photo and our AI matches colours, style and occasion within your budget.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-title">
+        <h2>How It Works</h2>
+        <p>Three simple steps from budget to shopping list</p>
+      </div>
+      <div class="grid grid-3">
+        <div class="card feature-card"><div class="body text-center">
+          <div class="avatar" style="margin:0 auto 12px">1</div>
+          <h3>Enter your budget</h3><p>Choose a planner and tell us your total budget and needs.</p></div></div>
+        <div class="card feature-card"><div class="body text-center">
+          <div class="avatar" style="margin:0 auto 12px">2</div>
+          <h3>Gemini AI plans it</h3><p>Google Gemini splits the budget and picks products that fit.</p></div></div>
+        <div class="card feature-card"><div class="body text-center">
+          <div class="avatar" style="margin:0 auto 12px">3</div>
+          <h3>Shop with one click</h3><p>Open ready-made searches on Indian shopping platforms.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="testimonials">
+    <div class="container">
+      <div class="section-title">
+        <h2>What Users Can Expect</h2>
+        <p>Example scenarios PocketSmart is designed for</p>
+      </div>
+      <div class="grid grid-3">
+        <div class="card testimonial">
+          <p>Furnishing a new 2BHK: enter ₹1,50,000, pick living room and bedroom, and get lights, fans and furniture split across IKEA and Amazon.</p>
+          <div class="who"><div class="avatar"><i class="fa-solid fa-house"></i></div><div><strong>New Home Owner</strong><span>Home Planner</span></div></div>
+        </div>
+        <div class="card testimonial">
+          <p>A birthday party for 30 guests on ₹25,000: the AI allocates catering, decoration and entertainment and links to Swiggy and Zomato.</p>
+          <div class="who"><div class="avatar"><i class="fa-solid fa-cake-candles"></i></div><div><strong>Party Host</strong><span>Party Planner</span></div></div>
+        </div>
+        <div class="card testimonial">
+          <p>Attending a wedding: upload the saree photo, set ₹10,000, and get jewelry that matches its colours from Tanishq, CaratLane and more.</p>
+          <div class="who"><div class="avatar"><i class="fa-solid fa-gem"></i></div><div><strong>Wedding Guest</strong><span>Jewelry Planner</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <h2>Ready to Optimize Your Budget?</h2>
+    <p>Join PocketSmart today and start making smarter financial decisions across all areas of your life.</p>
+    <div class="actions" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+      <a href="/login" class="btn btn-light">Sign In</a>
+      <a href="/register" class="btn">Create Account</a>
+    </div>
+  </section>
+</main>
+{% endblock %}

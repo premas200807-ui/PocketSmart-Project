@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Create Account - PocketSmart AI{% endblock %}
+{% block content %}
+<main class="auth-page">
+  <div class="auth-logo">
+    <h1>PocketSmart</h1>
+    <p>AI-Powered Budget Planning</p>
+  </div>
+  <div class="auth-card">
+    <h2>Create Your Account</h2>
+    <div id="alert" class="alert"></div>
+    <form id="registerForm" novalidate>
+      <div class="form-group">
+        <label for="username">Username</label>
+        <div class="input-icon"><i class="fa-solid fa-user"></i>
+          <input type="text" id="username" placeholder="Choose a username" required autocomplete="username"></div>
+      </div>
+      <div class="form-group">
+        <label for="full_name">Full Name</label>
+        <div class="input-icon"><i class="fa-solid fa-id-card"></i>
+          <input type="text" id="full_name" placeholder="Your name (optional)"></div>
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <div class="input-icon"><i class="fa-solid fa-envelope"></i>
+          <input type="email" id="email" placeholder="Enter your email" required autocomplete="email"></div>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-icon"><i class="fa-solid fa-lock"></i>
+          <input type="password" id="password" placeholder="Create a strong password" required autocomplete="new-password"></div>
+        <div class="strength"><span id="strengthBar"></span></div>
+      </div>
+      <div class="form-group">
+        <label for="confirm">Confirm Password</label>
+        <div class="input-icon"><i class="fa-solid fa-circle-check"></i>
+          <input type="password" id="confirm" placeholder="Confirm your password" required autocomplete="new-password"></div>
+      </div>
+      <button type="submit" class="btn btn-block" id="registerBtn">Create Account <i class="fa-solid fa-user-plus"></i></button>
+    </form>
+    <p class="switch">Already have an account? <a href="/login"><strong>Sign In</strong></a></p>
+  </div>
+</main>
+{% endblock %}
+{% block scripts %}
+<script>
+  const alertEl = document.getElementById("alert");
+  const pw = document.getElementById("password");
+  pw.addEventListener("input", () => {
+    const v = pw.value;
+    let score = 0;
+    if (v.length >= 6) score++;
+    if (v.length >= 10) score++;
+    if (/[A-Z]/.test(v) && /[a-z]/.test(v)) score++;
+    if (/\d/.test(v)) score++;
+    if (/[^A-Za-z0-9]/.test(v)) score++;
+    const bar = document.getElementById("strengthBar");
+    bar.style.width = (score * 20) + "%";
+    bar.style.background = score <= 2 ? "#dc2626" : score <= 3 ? "#f59e0b" : "#16a34a";
+  });
+
+  document.getElementById("registerForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const body = {
+      username: document.getElementById("username").value.trim(),
+      full_name: document.getElementById("full_name").value.trim() || null,
+      email: document.getElementById("email").value.trim(),
+      password: pw.value,
+    };
+    const confirm = document.getElementById("confirm").value;
+    if (body.username.length < 3) return showAlert(alertEl, "Username must be at least 3 characters.");
+    if (!/^\S+@\S+\.\S+$/.test(body.email)) return showAlert(alertEl, "Please enter a valid email.");
+    if (body.password.length < 6) return showAlert(alertEl, "Password must be at least 6 characters.");
+    if (body.password !== confirm) return showAlert(alertEl, "Passwords do not match.");
+
+    const btn = document.getElementById("registerBtn");
+    btn.disabled = true;
+    try {
+      await api("/register", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      window.location.href = "/login?registered=1";
+    } catch (err) {
+      showAlert(alertEl, err.message);
+      btn.disabled = false;
+    }
+  });
+</script>
+{% endblock %}

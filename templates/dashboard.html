@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - PocketSmart AI{% endblock %}
+{% block content %}
+<main>
+  <section class="page-header" style="padding-bottom:70px">
+    <h1>Welcome, {{ user.full_name or user.username }}!</h1>
+    <p>Choose a budget planner to get started with your personalized financial planning experience</p>
+    {% if not ai_ready %}
+    <p style="margin-top:10px"><span class="badge badge-fallback"><i class="fa-solid fa-triangle-exclamation"></i> Gemini API key not set - default recommendations will be used</span></p>
+    {% endif %}
+  </section>
+
+  <div class="container" style="margin-top:-40px">
+    <div class="grid grid-3">
+      <div class="card planner-card">
+        <div class="banner banner-home"><i class="fa-solid fa-couch"></i></div>
+        <div class="body">
+          <h3><i class="fa-solid fa-house"></i> Home Budget Planner</h3>
+          <p>Plan your interior design budget efficiently with AI-powered recommendations for furniture, lighting, and more.</p>
+          <a href="/home-planner" class="btn btn-block">Get Started</a>
+        </div>
+      </div>
+      <div class="card planner-card">
+        <div class="banner banner-party"><i class="fa-solid fa-champagne-glasses"></i></div>
+        <div class="body">
+          <h3><i class="fa-solid fa-champagne-glasses"></i> Party Budget Planner</h3>
+          <p>Plan your perfect event with budget allocations for venue, catering, decorations, and entertainment.</p>
+          <a href="/party-planner" class="btn btn-block">Get Started</a>
+        </div>
+      </div>
+      <div class="card planner-card">
+        <div class="banner banner-jewelry"><i class="fa-solid fa-gem"></i></div>
+        <div class="body">
+          <h3><i class="fa-solid fa-gem"></i> Jewelry Budget Planner</h3>
+          <p>Find the ideal jewelry pieces for any occasion that match your outfit and stay within your budget.</p>
+          <a href="/jewelry-planner" class="btn btn-block">Get Started</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center" style="margin:36px 0">
+      <a href="/history" class="btn btn-accent"><i class="fa-solid fa-clock-rotate-left"></i> View All Recommendation History</a>
+    </div>
+
+    <div class="result-block activity-card narrow" style="margin:0 auto 60px">
+      <div class="rb-head dark"><h3><i class="fa-solid fa-clock-rotate-left"></i> Recent Activity</h3></div>
+      <div class="rb-body" id="activity">
+        <div class="loader show"><div class="spinner"></div>Loading...</div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}
+{% block scripts %}
+<script>
+  (async () => {
+    const box = document.getElementById("activity");
+    try {
+      const { history } = await api("/recommendation-history");
+      if (!history.length) {
+        box.innerHTML = `<div class="empty"><i class="fa-regular fa-folder-open"></i>No plans yet. Pick a planner above to create your first one!</div>`;
+        return;
+      }
+      box.innerHTML = history.slice(0, 5).map((h) => `
+        <div class="activity-item" onclick="location.href='/history#${h.id}'">
+          <div class="activity-icon"><i class="fa-solid ${iconFor(h.type)}"></i></div>
+          <div><h4>${esc(historyTitle(h))}</h4><p>${historySubtitle(h)}</p></div>
+        </div>`).join("");
+    } catch (err) {
+      box.innerHTML = `<div class="empty">${esc(err.message)}</div>`;
+    }
+  })();
+</script>
+{% endblock %}

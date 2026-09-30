@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Recommendation History - PocketSmart AI{% endblock %}
+{% block content %}
+<main>
+  <section class="page-header">
+    <h1>Your Recommendation History</h1>
+    <p>View and manage all your previous budget plans and recommendations</p>
+  </section>
+
+  <div class="container" style="padding:36px 20px 60px">
+    <div class="filter-bar" id="filters">
+      <button class="active" data-f="all">All</button>
+      <button data-f="home"><i class="fa-solid fa-house"></i> Home</button>
+      <button data-f="party"><i class="fa-solid fa-champagne-glasses"></i> Party</button>
+      <button data-f="jewelry"><i class="fa-solid fa-gem"></i> Jewelry</button>
+    </div>
+    <div id="alert" class="alert"></div>
+    <div class="loader show" id="loader"><div class="spinner"></div>Loading history...</div>
+    <div class="grid grid-3" id="historyGrid"></div>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()" aria-label="Close">&times;</button>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+</main>
+{% endblock %}
+{% block scripts %}
+<script>
+  let HISTORY = [];
+  const grid = document.getElementById("historyGrid");
+
+  function detailsLine(h) {
+    const i = h.input || {};
+    if (h.type === "home") {
+      const rooms = [i.has_living_room && "Living Room", i.has_kitchen && "Kitchen", i.has_bedroom && "Bedroom"].filter(Boolean).join(", ") || "-";
+      return `<p><strong>Rooms:</strong> ${rooms}</p><p><strong>Lights:</strong> ${i.num_lights} &nbsp; <strong>Fans:</strong> ${i.num_fans} &nbsp; <strong>Furniture:</strong> ${i.num_furniture}</p>`;
+    }
+    if (h.type === "party") {
+      const needs = [i.needs_catering && "Catering", i.needs_decoration && "Decoration", i.needs_entertainment && "Entertainment"].filter(Boolean).join(", ") || "-";
+      return `<p><strong>Party Type:</strong> ${esc(i.party_type)}</p><p><strong>Guests:</strong> ${i.num_guests}</p><p><strong>Needs:</strong> ${needs}</p>`;
+    }
+    return `<p><strong>Occasion:</strong> ${esc(i.occasion)}</p><p><strong>With outfit image:</strong> ${i.image ? "Yes" : "No"}</p>`;
+  }
+
+  function render(filter = "all") {
+    const list = HISTORY.filter((h) => filter === "all" || h.type === filter);
+    if (!list.length) {
+      grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><i class="fa-regular fa-folder-open"></i>No recommendations here yet. <a href="/dashboard">Create one</a>.</div>`;
+      return;
+    }
+    grid.innerHTML = list.map((h) => `
+      <div class="card history-card ${h.type}" id="card-${h.id}">
+        <div class="hc-head">
+          <h4><i class="fa-solid ${iconFor(h.type)}"></i> ${esc(historyTitle(h))}</h4>
+          <time>${fmtDate(h.timestamp)}</time>
+        </div>
+        <div class="hc-body">
+          <div class="row">
+            <div><span>Total Budget</span><strong>${inr(h.summary.total_budget)}</strong></div>
+            <div><span>Remaining</span><strong style="color:${h.summary.remaining_budget >= 0 ? "var(--primary)" : "var(--danger)"}">${inr(h.summary.remaining_budget)}</strong></div>
+          </div>
+          ${detailsLine(h)}
+          <div class="chips" style="margin-top:10px">${(h.summary.categories || []).map((c) => `<span class="chip">${esc(titleCase(c))}</span>`).join("")}</div>
+        </div>
+        <div class="hc-foot">
+          <button class="btn btn-sm" style="flex:1" onclick="viewDetails('${h.id}')"><i class="fa-solid fa-eye"></i> View Full Details</button>
+          <button class="btn btn-sm btn-danger" onclick="removeItem('${h.id}')" title="Delete"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      </div>`).join("");
+  }
+
+  async function viewDetails(id) {
+    const body = document.getElementById("modalBody");
+    body.innerHTML = `<div class="loader show"><div class="spinner"></div>Loading...</div>`;
+    document.getElementById("modal").classList.add("show");
+    try {
+      const d = await api(`/recommendation-details/${id}`);
+      body.innerHTML = `<p class="hint" style="margin-bottom:8px">Created ${fmtDate(d.timestamp)}</p>` + renderResult(d.type, d.full_result);
+    } catch (err) {
+      body.innerHTML = `<div class="alert alert-error show">${esc(err.message)}</div>`;
+    }
+  }
+
+  function closeModal() { document.getElementById("modal").classList.remove("show"); }
+  document.getElementById("modal").addEventListener("click", (e) => { if (e.target.id === "modal") closeModal(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
+
+  async function removeItem(id) {
+    try {
+      await api(`/recommendation-details/${id}`, { method: "DELETE" });
+      HISTORY = HISTORY.filter((h) => h.id !== id);
+      render(document.querySelector("#filters .active").dataset.f);
+    } catch (err) { showAlert(document.getElementById("alert"), err.message); }
+  }
+
+  document.getElementById("filters").addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    document.querySelectorAll("#filters button").forEach((x) => x.classList.remove("active"));
+    b.classList.add("active");
+    render(b.dataset.f);
+  });
+
+  (async () => {
+    try {
+      HISTORY = (await api("/recommendation-history")).history;
+      render();
+      const hash = location.hash.slice(1);
+      if (hash && HISTORY.some((h) => h.id === hash)) viewDetails(hash);
+    } catch (err) {
+      showAlert(document.getElementById("alert"), err.message);
+    } finally {
+      document.getElementById("loader").classList.remove("show");
+    }
+  })();
+</script>
+{% endblock %}

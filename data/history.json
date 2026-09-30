@@ -1,0 +1,216 @@
+{
+  "prema": [
+    {
+      "id": "c48d0c2f-4cf3-4da5-90ae-c768edd58864",
+      "username": "prema",
+      "timestamp": "2026-09-27T20:00:28",
+      "recommendation_type": "party",
+      "input_summary": {
+        "total_budget": 25000.0,
+        "party_type": "Birthday",
+        "num_guests": 5,
+        "venue_type": "Restaurant",
+        "needs_catering": true,
+        "needs_decoration": true,
+        "needs_entertainment": false,
+        "additional_requirements": "pure veg"
+      },
+      "result_summary": {
+        "total_budget": 25000.0,
+        "remaining_budget": 10.0,
+        "categories": [
+          "venue",
+          "catering",
+          "decoration",
+          "contingency"
+        ],
+        "items_count": 5,
+        "source": "fallback"
+      },
+      "full_result": {
+        "total_budget": 25000.0,
+        "budget_breakdown": [
+          {
+            "category": "venue",
+            "allocation": 8333.33,
+            "items": [
+              {
+                "name": "Restaurant booking",
+                "quantity": 1,
+                "description": "Space for about 5 guests for a birthday event.",
+                "estimated_price": 8330.0,
+                "search_terms": "Restaurant for 5 guests",
+                "line_total": 8330.0,
+                "shopping_links": {
+                  "google": "https://www.google.com/search?q=Restaurant+for+5+guests",
+                  "booking": "https://www.booking.com/searchresults.html?ss=Restaurant+for+5+guests",
+                  "makemytrip": "https://www.makemytrip.com/hotels/hotel-listing/?searchText=Restaurant+for+5+guests",
+                  "oyorooms": "https://www.oyorooms.com/search?location=Restaurant+for+5+guests",
+                  "nobroker": "https://www.nobroker.in/property/search?searchTerm=Restaurant+for+5+guests"
+                }
+              }
+            ]
+          },
+          {
+            "category": "catering",
+            "allocation": 11111.11,
+            "items": [
+              {
+                "name": "Veg + Non-veg buffet (per plate)",
+                "quantity": 5,
+                "description": "Starters, main course and dessert from a local caterer.",
+                "estimated_price": 2222.0,
+                "search_terms": "birthday catering per plate",
+                "line_total": 11110.0,
+                "shopping_links": {
+                  "swiggy": "https://www.swiggy.com/search?query=birthday+catering+per+plate",
+                  "zomato": "https://www.zomato.com/search?q=birthday+catering+per+plate"
+                }
+              }
+            ]
+          },
+          {
+            "category": "decoration",
+            "allocation": 4166.67,
+            "items": [
+              {
+                "name": "Birthday theme decoration kit",
+                "quantity": 1,
+                "description": "Balloons, banners, backdrop and lights.",
+                "estimated_price": 2500.0,
+                "search_terms": "birthday decoration kit",
+                "line_total": 2500.0,
+                "shopping_links": {
+                  "amazon": "https://www.amazon.in/s?k=birthday+decoration+kit",
+                  "flipkart": "https://www.flipkart.com/search?q=birthday+decoration+kit",
+                  "meesho": "https://www.meesho.com/search?q=birthday+decoration+kit",
+                  "myntra": "https://www.myntra.com/birthday+decoration+kit"
+                }
+              },
+              {
+                "name": "LED fairy lights",
+                "quantity": 2,
+                "description": "Warm lighting for ambience.",
+                "estimated_price": 830.0,
+                "search_terms": "LED fairy lights 10m",
+                "line_total": 1660.0,
+                "shopping_links": {
+                  "amazon": "https://www.amazon.in/s?k=LED+fairy+lights+10m",
+                  "flipkart": "https://www.flipkart.com/search?q=LED+fairy+lights+10m",
+                  "meesho": "https://www.meesho.com/search?q=LED+fairy+lights+10m",
+                  "myntra": "https://www.myntra.com/LED+fairy+lights+10m"
+                }
+              }
+            ]
+          },
+          {
+            "category": "contingency",
+            "allocation": 1388.89,
+            "items": [
+              {
+                "name": "Buffer for unexpected costs",
+                "quantity": 1,
+                "description": "Transport, tips and last-minute purchases.",
+                "estimated_price": 1390.0,
+                "search_terms": "",
+                "line_total": 1390.0
+              }
+            ]
+          }
+        ],
+        "venue_suggestions": [
+          {
+            "name": "Community / party hall near you",
+            "type": "Restaurant",
+            "capacity": 5,
+            "estimated_cost": 8330.0,
+            "search_terms": "party hall for 5 guests",
+            "search_links": {
+              "google": "https://www.google.com/search?q=party+hall+for+5+guests",
+              "booking": "https://www.booking.com/searchresults.html?ss=party+hall+for+5+guests",
+              "makemytrip": "https://www.makemytrip.com/hotels/hotel-listing/?searchText=party+hall+for+5+guests",
+              "oyorooms": "https://www.oyorooms.com/search?location=party+hall+for+5+guests",
+              "nobroker": "https://www.nobroker.in/property/search?searchTerm=party+hall+for+5+guests"
+            }
+          },
+          {
+            "name": "Hotel banquet (OYO / budget hotels)",
+            "type": "Hotel",
+            "capacity": 5,
+            "estimated_cost": 8330.0,
+            "search_terms": "hotel banquet birthday",
+            "search_links": {
+              "google": "https://www.google.com/search?q=hotel+banquet+birthday",
+              "booking": "https://www.booking.com/searchresults.html?ss=hotel+banquet+birthday",
+              "makemytrip": "https://www.makemytrip.com/hotels/hotel-listing/?searchText=hotel+banquet+birthday",
+              "oyorooms": "https://www.oyorooms.com/search?location=hotel+banquet+birthday",
+              "nobroker": "https://www.nobroker.in/property/search?searchTerm=hotel+banquet+birthday"
+            }
+          }
+        ],
+        "additional_suggestions": [
+          "Book the venue and caterer at least 2-3 weeks early for better rates.",
+          "Order bulk snacks and drinks from BigBasket to reduce catering cost.",
+          "Confirm the final guest count 3 days before to avoid food wastage."
+        ],
+        "calculation_table": [
+          {
+            "category": "venue",
+            "items_count": 1,
+            "total_cost": 8330.0,
+            "percentage_of_budget": 33.3
+          },
+          {
+            "category": "catering",
+            "items_count": 1,
+            "total_cost": 11110.0,
+            "percentage_of_budget": 44.4
+          },
+          {
+            "category": "decoration",
+            "items_count": 2,
+            "total_cost": 4160.0,
+            "percentage_of_budget": 16.6
+          },
+          {
+            "category": "contingency",
+            "items_count": 1,
+            "total_cost": 1390.0,
+            "percentage_of_budget": 5.6
+          }
+        ],
+        "total_spent": 24990.0,
+        "remaining_budget": 10.0,
+        "within_budget": true,
+        "calculation_table_inr": [
+          {
+            "category": "venue",
+            "items_count": 1,
+            "total_cost": 8330.0,
+            "percentage_of_budget": 33.3
+          },
+          {
+            "category": "catering",
+            "items_count": 1,
+            "total_cost": 11110.0,
+            "percentage_of_budget": 44.4
+          },
+          {
+            "category": "decoration",
+            "items_count": 2,
+            "total_cost": 4160.0,
+            "percentage_of_budget": 16.6
+          },
+          {
+            "category": "contingency",
+            "items_count": 1,
+            "total_cost": 1390.0,
+            "percentage_of_budget": 5.6
+          }
+        ],
+        "source": "fallback",
+        "note": "AI service unavailable - showing default recommendations."
+      }
+    }
+  ]
+}

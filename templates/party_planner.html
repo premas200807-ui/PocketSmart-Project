@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Party Planner - PocketSmart AI{% endblock %}
+{% block content %}
+<main>
+  <section class="page-header">
+    <h1>Party Budget Planner</h1>
+    <p>Plan a memorable event - venue, catering, decoration and entertainment - within your budget</p>
+  </section>
+
+  <div class="container narrow">
+    <form id="partyForm" class="form-card" novalidate>
+      <div id="alert" class="alert"></div>
+
+      <div class="form-section">
+        <h3><i class="fa-solid fa-indian-rupee-sign"></i> Budget Details</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="total_budget">Total Budget (₹)</label>
+            <div class="input-icon"><i class="fa-solid fa-money-bill-wave"></i>
+              <input type="number" id="total_budget" min="1000" step="100" placeholder="e.g. 25000" required></div>
+          </div>
+          <div class="form-group">
+            <label for="num_guests">Number of Guests</label>
+            <div class="input-icon"><i class="fa-solid fa-users"></i>
+              <input type="number" id="num_guests" min="1" max="5000" placeholder="e.g. 30" required></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3><i class="fa-solid fa-champagne-glasses"></i> Event Details</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="party_type">Event Type</label>
+            <select id="party_type" required>
+              <option value="">Select event type</option>
+              <option>Birthday</option>
+              <option>Wedding</option>
+              <option>Engagement</option>
+              <option>Anniversary</option>
+              <option>Corporate</option>
+              <option>Baby Shower</option>
+              <option>Housewarming</option>
+              <option>Festival Celebration</option>
+              <option>Get-together</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="venue_type">Venue Type</label>
+            <select id="venue_type">
+              <option value="">Not decided</option>
+              <option>Home</option>
+              <option>Banquet Hall</option>
+              <option>Restaurant</option>
+              <option>Hotel</option>
+              <option>Outdoor / Garden</option>
+              <option>Terrace</option>
+              <option>Resort</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3><i class="fa-solid fa-list-check"></i> Services Needed</h3>
+        <div class="checks">
+          <label class="check"><input type="checkbox" id="needs_catering" checked> <i class="fa-solid fa-bowl-food"></i> Catering</label>
+          <label class="check"><input type="checkbox" id="needs_decoration" checked> <i class="fa-solid fa-wand-magic-sparkles"></i> Decoration</label>
+          <label class="check"><input type="checkbox" id="needs_entertainment"> <i class="fa-solid fa-music"></i> Entertainment</label>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3><i class="fa-solid fa-clipboard"></i> Additional Information</h3>
+        <div class="form-group">
+          <label for="additional_requirements">Special Requirements</label>
+          <textarea id="additional_requirements" maxlength="500" placeholder="e.g. pure veg food, kids theme, city: Chennai..."></textarea>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <button type="submit" class="btn" id="submitBtn"><i class="fa-solid fa-calculator"></i> Generate Party Plan</button>
+      </div>
+    </form>
+
+    <div class="loader" id="loader"><div class="spinner"></div>Gemini AI is planning your party...</div>
+    <div class="results" id="results"></div>
+  </div>
+</main>
+{% endblock %}
+{% block scripts %}
+<script>
+  const $ = (id) => document.getElementById(id);
+  $("partyForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const total = parseFloat($("total_budget").value);
+    const guests = parseInt($("num_guests").value, 10);
+    if (!total || total < 1000) return showAlert($("alert"), "Please enter a budget of at least ₹1,000.");
+    if (!guests || guests < 1) return showAlert($("alert"), "Please enter the number of guests.");
+    if (!$("party_type").value) return showAlert($("alert"), "Please select an event type.");
+    if (total / guests < 50) return showAlert($("alert"), `₹${Math.round(total / guests)} per guest is too low for a realistic plan. Increase the budget or reduce guests.`);
+
+    const body = {
+      total_budget: total,
+      num_guests: guests,
+      party_type: $("party_type").value,
+      venue_type: $("venue_type").value || null,
+      needs_catering: $("needs_catering").checked,
+      needs_decoration: $("needs_decoration").checked,
+      needs_entertainment: $("needs_entertainment").checked,
+      additional_requirements: $("additional_requirements").value.trim() || null,
+    };
+    runPlanner({
+      form: $("partyForm"), button: $("submitBtn"), loader: $("loader"), results: $("results"), alertEl: $("alert"),
+      type: "party",
+      request: () => api("/party-budget", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }),
+    });
+  });
+</script>
+{% endblock %}

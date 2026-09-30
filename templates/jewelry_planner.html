@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}Jewelry Planner - PocketSmart AI{% endblock %}
+{% block content %}
+<main>
+  <section class="page-header">
+    <h1>Jewelry Budget Planner</h1>
+    <p>Get AI-powered jewelry recommendations within your budget for any occasion</p>
+  </section>
+
+  <div class="container narrow">
+    <form id="jewelryForm" class="form-card" novalidate>
+      <div id="alert" class="alert"></div>
+
+      <div class="form-section">
+        <h3><i class="fa-solid fa-indian-rupee-sign"></i> Budget Details</h3>
+        <div class="form-group">
+          <label for="total_budget">Total Budget (₹)</label>
+          <div class="input-icon"><i class="fa-solid fa-money-bill-wave"></i>
+            <input type="number" id="total_budget" min="200" step="100" placeholder="e.g. 10000" required></div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3><i class="fa-solid fa-calendar-check"></i> Occasion &amp; Preferences</h3>
+        <div class="form-group">
+          <label for="occasion"><i class="fa-solid fa-champagne-glasses"></i> Occasion</label>
+          <select id="occasion" required>
+            <option value="">Select occasion</option>
+            <option>Wedding</option>
+            <option>Engagement</option>
+            <option>Reception</option>
+            <option>Birthday</option>
+            <option>Festival (Diwali / Pongal)</option>
+            <option>College Function</option>
+            <option>Office Party</option>
+            <option>Daily Wear</option>
+            <option>Anniversary</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="preferences"><i class="fa-solid fa-heart"></i> Style Preferences</label>
+          <textarea id="preferences" maxlength="500" placeholder="Describe your style preferences, materials, colours, etc. (e.g. gold-plated, temple jewelry, minimal)"></textarea>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3><i class="fa-solid fa-shirt"></i> Upload Outfit Image (optional)</h3>
+        <input type="file" id="image" accept="image/png,image/jpeg,image/webp" hidden>
+        <div class="upload-box" id="uploadBox">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <p><strong>Click to upload</strong> or drag &amp; drop your outfit photo</p>
+          <p class="hint">JPG, PNG or WEBP - max 8 MB. The AI will match jewelry to its colours and style.</p>
+        </div>
+        <div class="preview-wrap" id="previewWrap">
+          <img id="preview" alt="Outfit preview">
+          <button type="button" class="btn btn-sm btn-danger" id="removeImg"><i class="fa-solid fa-trash"></i> Remove Image</button>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <button type="submit" class="btn" id="submitBtn"><i class="fa-solid fa-gem"></i> Get Recommendations</button>
+      </div>
+    </form>
+
+    <div class="loader" id="loader"><div class="spinner"></div>Gemini AI is analysing your outfit and budget...</div>
+    <div class="results" id="results"></div>
+  </div>
+</main>
+{% endblock %}
+{% block scripts %}
+<script>
+  const $ = (id) => document.getElementById(id);
+  const fileInput = $("image"), box = $("uploadBox");
+  let selectedFile = null;
+
+  function setFile(file) {
+    if (!file) return;
+    if (!["image/png", "image/jpeg", "image/webp"].includes(file.type)) return showAlert($("alert"), "Please choose a JPG, PNG or WEBP image.");
+    if (file.size > 8 * 1024 * 1024) return showAlert($("alert"), "Image is too large (max 8 MB).");
+    hideAlert($("alert"));
+    selectedFile = file;
+    $("preview").src = URL.createObjectURL(file);
+    box.style.display = "none";
+    $("previewWrap").style.display = "flex";
+  }
+  box.addEventListener("click", () => fileInput.click());
+  fileInput.addEventListener("change", () => setFile(fileInput.files[0]));
+  ["dragover", "dragenter"].forEach((ev) => box.addEventListener(ev, (e) => { e.preventDefault(); box.classList.add("drag"); }));
+  ["dragleave", "drop"].forEach((ev) => box.addEventListener(ev, (e) => { e.preventDefault(); box.classList.remove("drag"); }));
+  box.addEventListener("drop", (e) => setFile(e.dataTransfer.files[0]));
+  $("removeImg").addEventListener("click", () => {
+    selectedFile = null; fileInput.value = "";
+    $("previewWrap").style.display = "none"; box.style.display = "block";
+  });
+
+  $("jewelryForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const total = parseFloat($("total_budget").value);
+    if (!total || total < 200) return showAlert($("alert"), "Please enter a budget of at least ₹200.");
+    if (!$("occasion").value) return showAlert($("alert"), "Please select an occasion.");
+
+    const fd = new FormData();
+    fd.append("total_budget", total);
+    fd.append("occasion", $("occasion").value);
+    fd.append("preferences", $("preferences").value.trim());
+    if (selectedFile) fd.append("image", selectedFile);
+
+    runPlanner({
+      form: $("jewelryForm"), button: $("submitBtn"), loader: $("loader"), results: $("results"), alertEl: $("alert"),
+      type: "jewelry",
+      request: () => api("/jewelry-budget", { method: "POST", body: fd }),
+    });
+  });
+</script>
+{% endblock %}
